@@ -167,8 +167,6 @@ vim.keymap.set('n', '<leader>gg', '<Cmd>LazyGit<CR>')
 -- Move Codigo selecionado
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
-vim.keymap.set('n', '<Tab>', '<Cmd>BufferLineCycleNext<CR>', {})
-vim.keymap.set('n', '<S-Tab>', '<Cmd>BufferLineCyclePrev<CR>', {})
 -- fazer o delete com dd nao salvar no clipboard
 vim.api.nvim_set_keymap('n', 'x', '"_x', { noremap = true })
 vim.api.nvim_set_keymap('n', 'd', '"_d', { noremap = true })
@@ -620,32 +618,74 @@ require('lazy').setup({
     end,
   },
 
-  { -- Autoformat
-    'stevearc/conform.nvim',
-    opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
-      end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
-      },
-    },
-  },
+  -- { -- Autoformat
+  --   'stevearc/conform.nvim',
+  --   opts = {
+  --     notify_on_error = false,
+  --     format_on_save = function(bufnr)
+  --       -- Disable "format_on_save lsp_fallback" for languages that don't
+  --       -- have a well standardized coding style. You can add additional
+  --       -- languages here or re-enable it for the disabled ones.
+  --       local disable_filetypes = { c = true, cpp = true }
+  --       return {
+  --         timeout_ms = 500,
+  --         lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+  --       }
+  --     end,
+  --     formatters_by_ft = {
+  --       lua = { 'stylua' },
+  --       -- Conform can also run multiple formatters sequentially
+  --       -- python = { "isort", "black" },
+  --       --
+  --       -- You can use a sub-list to tell conform to run *until* a formatter
+  --       -- is found.
+  --       -- javascript = { { "prettierd", "prettier" } },
+  --     },
+  --   },
+  -- },
+  --
 
+  -- {
+  --   'jose-elias-alvarez/null-ls.nvim',
+  --   config = function()
+  --     require('null-ls').setup()
+  --     require('lspconfig')['null-ls'].setup {}
+  --   end,
+  -- },
+
+  {
+    'MunifTanjim/eslint.nvim',
+    config = function()
+      local eslint = require 'eslint'
+      local lspconfig = require 'lspconfig'
+      local root_pattern = require('lspconfig.util').root_pattern
+
+      eslint.setup {
+        bin = 'eslint_d',
+        code_actions = {
+          enable = true,
+          apply_on_save = {
+            enable = true,
+            types = { 'directive', 'problem', 'suggestion', 'layout' },
+          },
+        },
+        diagnostics = {
+          enable = true,
+          run_on = 'save',
+        },
+      }
+
+      lspconfig.eslint.setup {
+        on_attach = function(client, bufnr)
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            command = 'EslintFixAll',
+          })
+        end,
+        root_dir = root_pattern('.eslintrc', 'node_modules/bin', '.git'),
+      }
+    end,
+  },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
@@ -713,7 +753,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<Enter>'] = cmp.mapping.confirm { select = true },
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
