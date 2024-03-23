@@ -173,6 +173,10 @@ vim.api.nvim_set_keymap('n', 'd', '"_d', { noremap = true })
 vim.api.nvim_set_keymap('n', 'D', '"_D', { noremap = true })
 vim.api.nvim_set_keymap('v', 'd', '"_d', { noremap = true })
 
+-- Faz que o ctrl + d e ctrl + u mova a tela alinhando no centro da tela
+vim.api.nvim_set_keymap('n', '<C-d>', '<C-d>zz', { noremap = true })
+vim.api.nvim_set_keymap('n', '<C-u>', '<C-u>zz', { noremap = true })
+
 vim.api.nvim_set_keymap('n', '<leader>d', '""d', { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>D', '""D', { noremap = true })
 vim.api.nvim_set_keymap('v', '<leader>d', '""d', { noremap = true })
