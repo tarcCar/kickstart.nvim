@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, for help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -158,6 +158,15 @@ vim.opt.scrolloff = 10
 vim.g.blamer_enabled = true
 vim.g.blamer_show_in_insert_modes = false
 vim.g.blamer_prefix = ' > '
+
+-- Use spaces instead of tabs for indentation
+vim.o.expandtab = true
+-- Set the number of spaces used for each indentation level
+vim.o.shiftwidth = 2
+-- Set the number of spaces used for each <Tab>
+vim.o.tabstop = 2
+-- Use auto-indentation
+vim.o.autoindent = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
