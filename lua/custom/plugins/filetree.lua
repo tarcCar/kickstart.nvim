@@ -14,8 +14,19 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
+  }, 
+  opts = {
+        filtered_items = {
+          hide_dotfiles = false,
+        },
   },
   config = function()
-    require('neo-tree').setup {}
+    require('neo-tree').setup {
+      filesystem = {
+        filtered_items = {
+          hide_dotfiles = false,
+        },
+      }
+    }
   end,
 }

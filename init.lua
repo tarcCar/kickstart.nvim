@@ -695,7 +695,7 @@ require('lazy').setup({
             command = 'EslintFixAll',
           })
         end,
-        root_dir = root_pattern('.eslintrc', 'node_modules/bin', '.git'),
+        root_dir = root_pattern('.eslintrc', '.eslintrc.json', 'node_modules/bin', '.git'),
       }
     end,
   },
