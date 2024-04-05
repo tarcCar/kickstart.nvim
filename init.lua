@@ -196,6 +196,8 @@ vim.api.nvim_set_keymap('n', '<C-u>', '<C-u>zz', { noremap = true })
 -- Map <leader>db to BufOnly command
 vim.api.nvim_set_keymap("n", "<leader>db", ":%bd|e#|bd#<CR>", { noremap = true, silent = true })
 
+-- Telescope todos
+vim.keymap.set('n', '<leader>st', '<cmd>:TodoTelescope<CR>')
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
