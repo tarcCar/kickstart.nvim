@@ -185,10 +185,14 @@ vim.api.nvim_set_keymap('v', 'd', '"_d', { noremap = true })
 -- Faz que o ctrl + d e ctrl + u mova a tela alinhando no centro da tela
 vim.api.nvim_set_keymap('n', '<C-d>', '<C-d>zz', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-u>', '<C-u>zz', { noremap = true })
-
+-- faz o dd e D nao salvar no clipboard
 vim.api.nvim_set_keymap('n', '<leader>d', '""d', { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>D', '""D', { noremap = true })
 vim.api.nvim_set_keymap('v', '<leader>d', '""d', { noremap = true })
+
+-- telescope todo
+vim.keymap.set('n', '<leader>st', '<cmd>:TodoTelescope<CR>')
+
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
