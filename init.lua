@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -176,10 +176,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -190,6 +190,41 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Minhas keys Maps
+--Lazygit
+vim.keymap.set('n', '<leader>gg', '<Cmd>LazyGit<CR>')
+-- Move Codigo selecionado
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+-- fazer o delete com dd nao salvar no clipboard
+vim.api.nvim_set_keymap('n', 'x', '"_x', { noremap = true })
+vim.api.nvim_set_keymap('n', 'd', '"_d', { noremap = true })
+vim.api.nvim_set_keymap('n', 'D', '"_D', { noremap = true })
+vim.api.nvim_set_keymap('v', 'd', '"_d', { noremap = true })
+
+vim.api.nvim_set_keymap('n', '<leader>d', '""d', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>D', '""D', { noremap = true })
+vim.api.nvim_set_keymap('v', '<leader>d', '""d', { noremap = true })
+-- Faz que o ctrl + d e ctrl + u mova a tela alinhando no centro da tela
+vim.api.nvim_set_keymap('n', '<C-d>', '<C-d>zz', { noremap = true })
+vim.api.nvim_set_keymap('n', '<C-u>', '<C-u>zz', { noremap = true })
+-- funcao e atalho para apagar os buffers menos o atual
+
+-- Define the Lua function to delete all buffers except the current one
+
+-- Map <leader>db to BufOnly command
+vim.api.nvim_set_keymap('n', '<leader>db', ':%bd|e#|bd#<CR>', { noremap = true, silent = true })
+
+-- Telescope todos
+vim.keymap.set('n', '<leader>st', '<cmd>:TodoTelescope<CR>')
+-- Use spaces instead of tabs for indentation
+vim.o.expandtab = true
+-- Set the number of spaces used for each indentation level
+vim.o.shiftwidth = 2
+-- Set the number of spaces used for each <Tab>
+vim.o.tabstop = 2
+-- Use auto-indentation
+vim.o.autoindent = true
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -624,43 +659,75 @@ require('lazy').setup({
     end,
   },
 
-  { -- Autoformat
-    'stevearc/conform.nvim',
-    lazy = false,
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format { async = true, lsp_fallback = true }
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
-    opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
-      end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
-      },
-    },
-  },
+  -- { -- Autoformat
+  --   'stevearc/conform.nvim',
+  --   lazy = false,
+  --   keys = {
+  --     {
+  --       '<leader>f',
+  --       function()
+  --         require('conform').format { async = true, lsp_fallback = true }
+  --       end,
+  --       mode = '',
+  --       desc = '[F]ormat buffer',
+  --     },
+  --   },
+  --   opts = {
+  --     notify_on_error = false,
+  --     format_on_save = function(bufnr)
+  --       -- Disable "format_on_save lsp_fallback" for languages that don't
+  --       -- have a well standardized coding style. You can add additional
+  --       -- languages here or re-enable it for the disabled ones.
+  --       local disable_filetypes = { c = true, cpp = true }
+  --       return {
+  --         timeout_ms = 500,
+  --         lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+  --       }
+  --     end,
+  --     formatters_by_ft = {
+  --       lua = { 'stylua' },
+  --       -- Conform can also run multiple formatters sequentially
+  --       -- python = { "isort", "black" },
+  --       --
+  --       -- You can use a sub-list to tell conform to run *until* a formatter
+  --       -- is found.
+  --       -- javascript = { { "prettierd", "prettier" } },
+  --     },
+  --   },
+  -- },
+  {
+    'MunifTanjim/eslint.nvim',
+    config = function()
+      local eslint = require 'eslint'
+      local lspconfig = require 'lspconfig'
+      local root_pattern = require('lspconfig.util').root_pattern
 
+      eslint.setup {
+        bin = 'eslint_d',
+        code_actions = {
+          enable = true,
+          apply_on_save = {
+            enable = true,
+            types = { 'directive', 'problem', 'suggestion', 'layout' },
+          },
+        },
+        diagnostics = {
+          enable = true,
+          run_on = 'save',
+        },
+      }
+
+      lspconfig.eslint.setup {
+        on_attach = function(client, bufnr)
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            command = 'EslintFixAll',
+          })
+        end,
+        root_dir = root_pattern('.eslintrc', '.eslintrc.json', 'node_modules/bin', '.git'),
+      }
+    end,
+  },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
@@ -728,7 +795,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<enter>'] = cmp.mapping.confirm { select = true },
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
@@ -884,7 +951,7 @@ require('lazy').setup({
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
