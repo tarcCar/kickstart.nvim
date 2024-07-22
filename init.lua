@@ -225,6 +225,8 @@ vim.o.shiftwidth = 2
 vim.o.tabstop = 2
 -- Use auto-indentation
 vim.o.autoindent = true
+-- Abrir o historico local de alteracoes
+vim.api.nvim_set_keymap('n', '<leader>u', '<cmd>:UndotreeToggle<CR>', { noremap = true, desc = "Open UndoTree" })
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
