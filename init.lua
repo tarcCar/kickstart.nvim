@@ -211,8 +211,6 @@ vim.api.nvim_set_keymap('n', '<C-d>', '<C-d>zz', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-u>', '<C-u>zz', { noremap = true })
 -- funcao e atalho para apagar os buffers menos o atual
 
--- Define the Lua function to delete all buffers except the current one
-
 -- Map <leader>db to BufOnly command
 vim.api.nvim_set_keymap('n', '<leader>db', ':%bd|e#|bd#<CR>', { noremap = true, silent = true })
 
@@ -801,9 +799,10 @@ require('lazy').setup({
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
           -- Select the [n]ext item
-          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<down>'] = cmp.mapping.select_next_item(),
+
           -- Select the [p]revious item
-          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<up>'] = cmp.mapping.select_prev_item(),
 
           -- Scroll the documentation window [b]ack / [f]orward
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
