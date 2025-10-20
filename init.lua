@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = true 
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -225,25 +225,25 @@ vim.api.nvim_set_keymap('n', '<leader>db', ':%bd|e#|bd#<CR>', { noremap = true, 
 
 -- Spectre
 vim.keymap.set('n', '<leader>S', '<cmd>lua require("spectre").toggle()<CR>', {
-    desc = "Toggle Spectre"
+  desc = 'Toggle Spectre',
 })
 vim.keymap.set('n', '<leader>sw', '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
-    desc = "Search current word"
+  desc = 'Search current word',
 })
 vim.keymap.set('v', '<leader>sw', '<esc><cmd>lua require("spectre").open_visual()<CR>', {
-    desc = "Search current word"
+  desc = 'Search current word',
 })
 vim.keymap.set('n', '<leader>sp', '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
-    desc = "Search on current file"
+  desc = 'Search on current file',
 })
 
 -- zenmode
 vim.keymap.set('n', '<leader>z', '<cmd>:ZenMode<CR>', {
-    desc = "Toggle ZenMode"
+  desc = 'Toggle ZenMode',
 })
 
 -- Final minhas Keys Maps
-vim.opt.fileformats = "unix,dos,mac"
+vim.opt.fileformats = 'unix,dos,mac'
 -- gitblame
 vim.g.blamer_enabled = true
 vim.g.blamer_prefix = ' > '
@@ -256,7 +256,7 @@ vim.o.tabstop = 2
 -- Use auto-indentation
 vim.o.autoindent = true
 -- Abrir o historico local de alteracoes
-vim.api.nvim_set_keymap('n', '<leader>u', '<cmd>:UndotreeToggle<CR>', { noremap = true, desc = "Open UndoTree" })
+vim.api.nvim_set_keymap('n', '<leader>u', '<cmd>:UndotreeToggle<CR>', { noremap = true, desc = 'Open UndoTree' })
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
@@ -473,7 +473,7 @@ require('lazy').setup({
         -- pickers = {}
         defaults = {
           layout_strategy = 'vertical',
-          layout_config = { height = 0.95, mirror = true, prompt_position = 'top'},
+          layout_config = { height = 0.95, mirror = true, prompt_position = 'top' },
         },
         extensions = {
           ['ui-select'] = {
@@ -688,6 +688,25 @@ require('lazy').setup({
         end,
       })
 
+      -- biome
+      local lspconfig = require 'lspconfig'
+      local util = require 'lspconfig.util'
+
+      lspconfig.biome.setup {
+        cmd = { 'biome', 'lsp-proxy' },
+        filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json' },
+        root_dir = util.root_pattern('biome.json', 'package.json', '.git'),
+        single_file_support = true,
+        on_attach = function(client, bufnr)
+          -- optional: format on save
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            callback = function()
+              require('conform').format { bufnr = bufnr, async = false, lsp_fallback = false }
+            end,
+          })
+        end,
+      }
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
@@ -797,8 +816,8 @@ require('lazy').setup({
       }
     end,
   },
-
-  { -- Autoformat
+  {
+    -- 🔧 Autoformatting with Biome
     'stevearc/conform.nvim',
     lazy = false,
     keys = {
@@ -813,62 +832,34 @@ require('lazy').setup({
     },
     opts = {
       notify_on_error = false,
+
       format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
         return {
-          timeout_ms = 500,
+          timeout_ms = 1000,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
+
+      -- 🪄 Biome for JS/TS/JSON and Stylua for Lua
       formatters_by_ft = {
-            javascript = { "biome", "biome-organize-imports" },
-            javascriptreact = { "biome", "biome-organize-imports" },
-            typescript = { "biome", "biome-organize-imports" },
-            typescriptreact = { "biome", "biome-organize-imports" },       lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        javascript = { 'biome' },
+        javascriptreact = { 'biome' },
+        typescript = { 'biome' },
+        typescriptreact = { 'biome' },
+        json = { 'biome' },
+        lua = { 'stylua' },
+      },
+
+      -- Ensure Conform knows how to run Biome
+      formatters = {
+        biome = {
+          command = 'biome',
+          args = { 'format', '--stdin-file-path', '$FILENAME' },
+          stdin = true,
+        },
       },
     },
-  },
-  {
-    'MunifTanjim/eslint.nvim',
-    config = function()
-      local eslint = require 'eslint'
-      local lspconfig = require 'lspconfig'
-      local root_pattern = require('lspconfig.util').root_pattern
-
-      eslint.setup {
-        bin = 'eslint_d',
-        code_actions = {
-          enable = true,
-          apply_on_save = {
-            enable = true,
-            types = { 'directive', 'problem', 'suggestion', 'layout' },
-          },
-        },
-        diagnostics = {
-          enable = true,
-          run_on = 'save',
-        },
-      }
-
-      lspconfig.eslint.setup {
-        on_attach = function(client, bufnr)
-          vim.api.nvim_create_autocmd('BufWritePre', {
-            buffer = bufnr,
-            command = 'EslintFixAll',
-          })
-        end,
-        root_dir = root_pattern('.eslintrc', '.eslintrc.json', 'node_modules/bin', '.git'),
-      }
-    end,
   },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -982,25 +973,23 @@ require('lazy').setup({
     end,
   },
 
-  
+  { -- You can easily change to a different colorscheme.
+    -- Change the name of the colorscheme plugin below, and then
+    -- change the command in the config to whatever the name of that colorscheme is.
+    --
+    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+    'folke/tokyonight.nvim',
+    priority = 1000, -- Make sure to load this before all the other start plugins.
+    init = function()
+      -- Load the colorscheme here.
+      -- Like many other themes, this one has different styles, and you could load
+      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+      vim.cmd.colorscheme 'tokyonight-night'
 
-   { -- You can easily change to a different colorscheme.
-     -- Change the name of the colorscheme plugin below, and then
-     -- change the command in the config to whatever the name of that colorscheme is.
-     --
-     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-     'folke/tokyonight.nvim',
-     priority = 1000, -- Make sure to load this before all the other start plugins.
-     init = function()
-       -- Load the colorscheme here.
-       -- Like many other themes, this one has different styles, and you could load
-       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-       vim.cmd.colorscheme 'tokyonight-night'
-  
-       -- You can configure highlights by doing something like:
-       vim.cmd.hi 'Comment gui=none'
-     end,
-   },
+      -- You can configure highlights by doing something like:
+      vim.cmd.hi 'Comment gui=none'
+    end,
+  },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
